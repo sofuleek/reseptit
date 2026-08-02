@@ -6,7 +6,7 @@ CREATE TABLE users (
 
 CREATE TABLE items (
     id INTEGER PRIMARY KEY,
-    title TEXT UNIQUE,
+    title TEXT,
     description TEXT,
     preparation_time INTEGER,
     user_id INTEGER REFERENCES users
