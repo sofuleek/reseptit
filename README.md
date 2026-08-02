@@ -1,5 +1,7 @@
 # reseptit
 
+Sovelluksen käynnistäminen:
+Kopioi ensin tämän GitHub-repositorion linkki ja kloonaa repositorio omalle koneellesi komennolla git clone (linkki). Siirry sen jälkeen projektikansioon komennolla cd reseptit. Luo seuraavaksi virtuaaliympäristö komennolla python3 -m venv venv ja aktivoi se komennolla source venv/bin/activate. Asenna tarvittavat kirjastot komennolla pip install flask. Luo tietokanta suorittamalla komento sqlite3 database.db < schema.sql. Käynnistä sovellus komennolla flask run. Kun sovellus on käynnistynyt, komentoriville tulostuu osoite (esimerkiksi http://127.0.0.1:5000). Avaa tämä osoite selaimessa, jolloin sovellus on valmis käytettäväksi.
 
 Sovelluksessa toimivat tällä hetkellä (2.8.) seuraavat ominaisuudet: 
 - Käyttäjä voi luoda tunnuksen sekä kirjautua sisään ja ulos.
