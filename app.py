@@ -81,8 +81,14 @@ def update_recipe():
         abort(403)
 
     title = request.form["title"]
+    if not title or len(title) > 50:
+        abort(403)
     description = request.form["description"]
+    if not description or len(description) > 1000:
+        abort(403)
     preparation_time = request.form["preparation_time"]
+    if not re.search("^[1-9][0-9]{0,3}$", preparation_time):
+        abort(403)
 
     recipes.update_recipe(recipe_id, title, description, preparation_time)
 
