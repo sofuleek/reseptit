@@ -4,74 +4,74 @@ from flask import redirect, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
 import config
 import db
-import items
+import recipes
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
 @app.route("/")
 def index():
-    all_items = items.get_items()
-    return render_template("index.html", items=all_items)
+    all_recipes = recipes.get_recipes()
+    return render_template("index.html", recipes=all_recipes)
 
-@app.route("/find_item")
-def find_item():
+@app.route("/find_recipe")
+def find_recipe():
     query = request.args.get("query")
     if query:
-        results = items.find_items(query)
+        results = recipes.find_recipes(query)
     else:
         query = ""
         results = []
-    return render_template("find_item.html", query=query, results=results)
+    return render_template("find_recipe.html", query=query, results=results)
 
-@app.route("/item/<int:item_id>")
-def show_item(item_id):
-    item = items.get_item(item_id)
-    return render_template("show_item.html", item=item)
+@app.route("/recipe/<int:recipe_id>")
+def show_recipe(recipe_id):
+    recipe = recipes.get_recipe(recipe_id)
+    return render_template("show_recipe.html", recipe=recipe)
 
-@app.route("/new_item")
-def new_item():
-    return render_template("new_item.html")
+@app.route("/new_recipe")
+def new_recipe():
+    return render_template("new_recipe.html")
 
-@app.route("/create_item", methods=["POST"])
-def create_item():
+@app.route("/create_recipe", methods=["POST"])
+def create_recipe():
     title = request.form["title"]
     description = request.form["description"]
     preparation_time = request.form["preparation_time"]
     user_id = session["user_id"]
 
-    items.add_item(title, description, preparation_time, user_id)
+    recipes.add_recipe(title, description, preparation_time, user_id)
 
     return redirect("/")
 
-@app.route("/edit_item/<int:item_id>")
-def edit_item(item_id):
-    item = items.get_item(item_id)
-    return render_template("edit_item.html", item=item)
+@app.route("/edit_recipe/<int:recipe_id>")
+def edit_recipe(recipe_id):
+    recipe = recipes.get_recipe(recipe_id)
+    return render_template("edit_recipe.html", recipe=recipe)
 
-@app.route("/update_item", methods=["POST"])
-def update_item():
-    item_id = request.form["item_id"]
+@app.route("/update_recipe", methods=["POST"])
+def update_recipe():
+    recipe_id = request.form["recipe_id"]
     title = request.form["title"]
     description = request.form["description"]
     preparation_time = request.form["preparation_time"]
 
-    items.update_item(item_id, title, description, preparation_time)
+    recipes.update_recipe(recipe_id, title, description, preparation_time)
 
-    return redirect("/item/" + str(item_id))
+    return redirect("/recipe/" + str(recipe_id))
 
-@app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
-def remove_item(item_id):
+@app.route("/remove_recipe/<int:recipe_id>", methods=["GET", "POST"])
+def remove_recipe(recipe_id):
     if request.method == "GET":
-        item = items.get_item(item_id)
-        return render_template("remove_item.html", item=item)
+        recipe = recipes.get_recipe(recipe_id)
+        return render_template("remove_recipe.html", recipe=recipe)
 
     if request.method == "POST":
         if "remove" in request.form:
-            items.remove_item(item_id)
+            recipes.remove_recipe(recipe_id)
             return redirect("/")
         else:
-            return redirect("/item/" + str(item_id))
+            return redirect("/recipe/" + str(recipe_id))
 
 
 @app.route("/register")

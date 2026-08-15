@@ -20,14 +20,14 @@
   </p>
 
   <p>
-    <a href="new_item">Uusi resepti</a>
-    <a href="find_item">Etsi resepti</a>
+    <a href="new_recipe">Uusi resepti</a>
+    <a href="find_recipe">Etsi resepti</a>
   </p>
 
   <h2>Reseptit</h2>
   <ul>
-    {% for item in items %}
-    <li><a href="/item/{{ item.id }}">{{ item.title }}</a></li>
+    {% for recipe in recipes %}
+    <li><a href="/recipe/{{ recipe.id }}">{{ recipe.title }}</a></li>
     {% endfor %}
   </ul>
 </body>

@@ -8,7 +8,7 @@
 <body>
     <h1>Etsi resepti</h1>
 
-    <form action="/find_item" method="get">
+    <form action="/find_recipe" method="get">
     <p>
         Hakusana: <input type="text" name="query" value= "{{ query }}" >
     </p>
@@ -23,8 +23,8 @@
     <h2>Tulokset</h2>
 
     <ul>
-        {% for item in results %}
-        <li><a href="/item/{{ item.id }}">{{ item.title }}</a></li>
+        {% for recipe in results %}
+        <li><a href="/recipe/{{ recipe.id }}">{{ recipe.title }}</a></li>
         {% endfor %}
     </ul>
     {% endif %}
