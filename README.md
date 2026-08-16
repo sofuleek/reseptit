@@ -10,7 +10,7 @@
 6. Käynnistä sovellus komennolla `flask run`.
 7. Kun sovellus on käynnistynyt, komentoriville tulostuu osoite `http://127.0.0.1:5000`. Avaa tämä osoite selaimessa, jolloin sovellus on valmis käytettäväksi.
 
-## Sovelluksessa toimivat tällä hetkellä (16.8.) seuraavat ominaisuudet: 
+## Sovelluksessa toimivat tällä hetkellä (16.8.) seuraavat ominaisuudet, joita voi kokeilla: 
 - Käyttäjä voi luoda tunnuksen sekä kirjautua sisään ja ulos.
 - Käyttäjä voi lisätä uusia reseptejä sekä muokata ja poistaa omia reseptejään.
 - Käyttäjä voi tarkastella kaikkia sovellukseen lisättyjä reseptejä.
