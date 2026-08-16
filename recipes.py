@@ -1,5 +1,18 @@
 import db
 
+def get_all_classes():
+    sql = "SELECT title, value FROM classes ORDER BY id"
+    result = db.query(sql)
+
+    classes = {}
+
+    for title, value in result:
+        if title not in classes:
+            classes[title] = []
+        classes[title].append(value)
+
+    return classes
+
 def add_recipe(title, description, preparation_time, user_id, classes):
     sql = """INSERT INTO recipes (title, description, preparation_time, user_id)
             VALUES (?, ?, ?, ?)"""
@@ -40,6 +53,9 @@ def update_recipe(recipe_id, title, description, preparation_time):
     db.execute(sql, [title, description, preparation_time, recipe_id])
 
 def remove_recipe(recipe_id):
+    sql = "DELETE FROM recipe_classes WHERE recipe_id = ?"
+    db.execute(sql, [recipe_id])
+
     sql = "DELETE FROM recipes WHERE id = ?"
     db.execute(sql, [recipe_id])
 

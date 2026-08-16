@@ -12,6 +12,12 @@ CREATE TABLE recipes (
     user_id INTEGER REFERENCES users
 );
 
+CREATE TABLE classes (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    value TEXT
+);
+
 CREATE TABLE recipe_classes (
     id INTEGER PRIMARY KEY,
     recipe_id INTEGER REFERENCES recipes,
