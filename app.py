@@ -66,12 +66,19 @@ def create_recipe():
         abort(403)
     user_id = session["user_id"]
 
+    all_classes = recipes.get_all_classes()
+
     classes = []
     category = request.form.get("category")
     if category:
+        if category not in all_classes["Ruoan tyyppi"]:
+            abort(403)
         classes.append(("Ruoan tyyppi", category))
+    
     diets = request.form.getlist("diet")
     for diet in diets:
+        if diet not in all_classes["Ruokavalio"]:
+            abort(403)
         classes.append(("Ruokavalio", diet))
 
     recipes.add_recipe(title, description, preparation_time, user_id, classes)
@@ -119,12 +126,19 @@ def update_recipe():
     if not re.search("^[1-9][0-9]{0,3}$", preparation_time):
         abort(403)
 
+    all_classes = recipes.get_all_classes()
+
     classes = []
     category = request.form.get("category")
     if category:
+        if category not in all_classes["Ruoan tyyppi"]:
+            abort(403)
         classes.append(("Ruoan tyyppi", category))
+
     diets = request.form.getlist("diet")
     for diet in diets:
+        if diet not in all_classes["Ruokavalio"]:
+            abort(403)
         classes.append(("Ruokavalio", diet))
 
     recipes.update_recipe(recipe_id, title, description, preparation_time, classes)
