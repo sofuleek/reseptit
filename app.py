@@ -42,7 +42,8 @@ def show_recipe(recipe_id):
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
         abort(404)
-    return render_template("show_recipe.html", recipe=recipe)
+    classes = recipes.get_classes(recipe_id)
+    return render_template("show_recipe.html", recipe=recipe, classes=classes)
 
 @app.route("/new_recipe")
 def new_recipe():
@@ -64,7 +65,16 @@ def create_recipe():
         abort(403)
     user_id = session["user_id"]
 
-    recipes.add_recipe(title, description, preparation_time, user_id)
+    classes = []
+    category = request.form["category"]
+    if category:
+        classes.append(("Ruoan tyyppi", category))
+    diets = request.form.getlist("diet[]")
+    for diet in diets:
+        classes.append(("Ruokavalio", diet))
+    print(classes)
+
+    recipes.add_recipe(title, description, preparation_time, user_id, classes)
 
     return redirect("/")
 
