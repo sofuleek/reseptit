@@ -43,13 +43,31 @@ def show_recipe(recipe_id):
     if not recipe:
         abort(404)
     classes = recipes.get_classes(recipe_id)
-    return render_template("show_recipe.html", recipe=recipe, classes=classes)
+    comments = recipes.get_comments(recipe_id)
+    return render_template("show_recipe.html", recipe=recipe, classes=classes, comments=comments)
 
 @app.route("/new_recipe")
 def new_recipe():
     require_login()
     classes = recipes.get_all_classes()
     return render_template("new_recipe.html", classes=classes)
+
+@app.route("/create_comment", methods=["POST"])
+def create_comment():
+    require_login()
+
+    comment = request.form["comment"]
+    if not comment or len(comment) > 500:
+        abort(403)
+    recipe_id = request.form.get("recipe_id")
+    recipe = recipes.get_recipe(recipe_id)
+    if not recipe:
+        abort(404)
+    user_id = session["user_id"]
+
+    recipes.add_comment(recipe_id, user_id, comment)
+
+    return redirect("/recipe/" + str(recipe_id))
 
 @app.route("/create_recipe", methods=["POST"])
 def create_recipe():
@@ -74,7 +92,7 @@ def create_recipe():
         if category not in all_classes["Ruoan tyyppi"]:
             abort(403)
         classes.append(("Ruoan tyyppi", category))
-    
+
     diets = request.form.getlist("diet")
     for diet in diets:
         if diet not in all_classes["Ruokavalio"]:

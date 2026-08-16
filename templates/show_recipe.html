@@ -32,6 +32,18 @@
         </ul>
     </p>
     {% endif %}
+    <h2>Kommentit</h2>
+    <ul>
+        {% for comment in comments %}
+        <li>{{ comment.comment }} - <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a></li>
+        {% endfor %}
+    </ul>
+    <h2>Uusi kommentti</h2>
+    <form action="/create_comment" method="post">
+        <textarea name="comment" rows="5" cols="30" maxlength="500" required ></textarea>
+        <input type="hidden" name="recipe_id" value ="{{ recipe.id }}">
+        <input type="submit" value="Lähetä kommentti"/>
+    </form>
     <p>
         <a href="/">Takaisin</a>     
     </p>
