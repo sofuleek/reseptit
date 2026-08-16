@@ -86,7 +86,18 @@ def edit_recipe(recipe_id):
         abort(404)
     if recipe["user_id"] != session["user_id"]:
         abort(403)
-    return render_template("edit_recipe.html", recipe=recipe)
+
+    all_classes = recipes.get_all_classes()
+
+    classes = {}
+    for class_name in all_classes:
+        classes[class_name] = []
+
+    for entry in recipes.get_classes(recipe_id):
+        classes[entry["title"]].append(entry["value"])
+
+    return render_template("edit_recipe.html", recipe=recipe, classes=classes, all_classes=all_classes)
+
 
 @app.route("/update_recipe", methods=["POST"])
 def update_recipe():
@@ -108,7 +119,15 @@ def update_recipe():
     if not re.search("^[1-9][0-9]{0,3}$", preparation_time):
         abort(403)
 
-    recipes.update_recipe(recipe_id, title, description, preparation_time)
+    classes = []
+    category = request.form.get("category")
+    if category:
+        classes.append(("Ruoan tyyppi", category))
+    diets = request.form.getlist("diet")
+    for diet in diets:
+        classes.append(("Ruokavalio", diet))
+
+    recipes.update_recipe(recipe_id, title, description, preparation_time, classes)
 
     return redirect("/recipe/" + str(recipe_id))
 

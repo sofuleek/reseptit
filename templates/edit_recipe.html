@@ -21,7 +21,52 @@
       <input type="text" name="preparation_time" size="8" pattern = "[1-9][0-9]{0,3}" required value="{{ recipe.preparation_time }}" /> min
     </p>
     <input type="hidden" name="recipe_id" value="{{ recipe.id }}" />
-    <input type="submit" value="Päivitä reseptia" />
+    {% for class in all_classes %}
+      <p>
+        {{ class }}: <br />
+
+        {% for option in all_classes[class] %}
+
+          {% if class == "Ruoan tyyppi" %}
+
+            {% if option in classes[class] %}
+              <input type="radio"
+                    name="category"
+                    value="{{ option }}"
+                    id="{{ class }}{{ option }}"
+                    checked>
+            {% else %}
+              <input type="radio"
+                    name="category"
+                    value="{{ option }}"
+                    id="{{ class }}{{ option }}">
+            {% endif %}
+
+            <label for="{{ class }}{{ option }}">{{ option }}</label>
+
+          {% elif class == "Ruokavalio" %}
+
+            {% if option in classes[class] %}
+              <input type="checkbox"
+                    name="diet"
+                    value="{{ option }}"
+                    id="{{ class }}{{ option }}"
+                    checked>
+            {% else %}
+              <input type="checkbox"
+                    name="diet"
+                    value="{{ option }}"
+                    id="{{ class }}{{ option }}">
+            {% endif %}
+
+            <label for="{{ class }}{{ option }}">{{ option }}</label>
+
+          {% endif %}
+
+        {% endfor %}
+      </p>
+    {% endfor %}
+    <input type="submit" value="Päivitä resepti" />
   </form>
 </body>
 
