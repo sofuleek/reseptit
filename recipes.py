@@ -24,13 +24,13 @@ def add_recipe(title, description, preparation_time, user_id, classes):
     for class_title, class_value in classes:
         db.execute(sql, [recipe_id, class_title, class_value])
 
-def add_comment(recipe_id, user_id, comment):
-    sql = """INSERT INTO comments (recipe_id, user_id, comment)
-            VALUES (?, ?, ?)"""
-    db.execute(sql, [recipe_id, user_id, comment])
+def add_comment(recipe_id, user_id, comment, grade):
+    sql = """INSERT INTO comments (recipe_id, user_id, comment, grade)
+            VALUES (?, ?, ?, ?)"""
+    db.execute(sql, [recipe_id, user_id, comment, grade])
 
 def get_comments(recipe_id):
-    sql = """SELECT comments.comment, users.id user_id, users.username
+    sql = """SELECT comments.comment, comments.grade, users.id user_id, users.username
              FROM comments, users
              WHERE comments.recipe_id = ? AND comments.user_id = users.id
              ORDER BY comments.id DESC"""
@@ -73,6 +73,9 @@ def update_recipe(recipe_id, title, description, preparation_time, classes):
 
 def remove_recipe(recipe_id):
     sql = "DELETE FROM recipe_classes WHERE recipe_id = ?"
+    db.execute(sql, [recipe_id])
+
+    sql = "DELETE FROM comments WHERE recipe_id = ?"
     db.execute(sql, [recipe_id])
 
     sql = "DELETE FROM recipes WHERE id = ?"

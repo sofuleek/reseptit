@@ -32,19 +32,27 @@
         </ul>
     </p>
     {% endif %}
-    <h2>Kommentit</h2>
+    <h2>Arvostelut</h2>
     <ul>
         {% for comment in comments %}
-        <li>{{ comment.comment }} - <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a></li>
+        <li>{{ comment.comment }} , {{ comment.grade }} - <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a></li>
         {% endfor %}
     </ul>
-    <h2>Uusi kommentti</h2>
-    <form action="/create_comment" method="post">
-        <textarea name="comment" rows="5" cols="30" maxlength="500" required ></textarea>
-        <input type="hidden" name="recipe_id" value ="{{ recipe.id }}">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-        <input type="submit" value="Lähetä kommentti"/>
-    </form>
+    {% if session.user_id %}
+        <h2>Uusi arvostelu</h2>
+        <form action="/create_comment" method="post">
+            <label for="grade">Arvosana (1-10):</label><br>
+            <input type="text" name="grade" id="grade" maxlength="2" size="4" pattern="^(10|[1-9])$" required/>
+        
+            <br><br>
+        
+            <label for="comment">Kommentti:</label><br>
+            <textarea name="comment" rows="5" cols="30" maxlength="400" required ></textarea>
+            <input type="hidden" name="recipe_id" value ="{{ recipe.id }}">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+            <input type="submit" value="Lähetä kommentti"/>
+        </form>
+    {% endif %}
     <p>
         <a href="/">Takaisin</a>     
     </p>

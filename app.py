@@ -64,16 +64,22 @@ def create_comment():
     require_login()
     check_csrf()
 
-    comment = request.form["comment"]
-    if not comment or len(comment) > 500:
-        abort(403)
     recipe_id = request.form.get("recipe_id")
+    grade = request.form["grade"]
+    if not re.search("^(10|[1-9])$", grade):
+        abort(403)
+    comment = request.form["comment"].strip()
+    if not comment:
+        abort(403)
+    if len(comment) > 400:
+        abort(403)
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
-        abort(404)
+        abort(403)
+
     user_id = session["user_id"]
 
-    recipes.add_comment(recipe_id, user_id, comment)
+    recipes.add_comment(recipe_id, user_id, comment, grade)
 
     return redirect("/recipe/" + str(recipe_id))
 

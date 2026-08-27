@@ -16,7 +16,8 @@ CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
     recipe_id INTEGER REFERENCES recipes,
     user_id INTEGER REFERENCES users,
-    comment TEXT
+    comment TEXT,
+    grade INTEGER
 );
 
 CREATE TABLE classes (
