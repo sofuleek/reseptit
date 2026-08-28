@@ -1,61 +1,53 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>{{ recipe.title }}</title>
-</head>
+{% block title %}{{ recipe.title }}{% endblock %}
 
-<body>
-    <h1>{{ recipe.title }}</h1>
-    {% if session.user_id == recipe.user_id%}
-    <p>
-        <a href = "/edit_recipe/{{ recipe.id}}">Muokkaa</a>
-        <a href = "/remove_recipe/{{ recipe.id}}">Poista</a>
-    </p>
-    {% endif %}
-    <p>
-        {{ recipe.description }}
-    </p>
-    <p>
-        Valmistusaika: {{ recipe.preparation_time }} min
-    </p>
-    <p>
-        Ilmoittaja:  <a href="/user/{{ recipe.user_id }}">{{ recipe.username }}</a>
-    </p>
-    {% if classes %}
-    <p>
-        Luokat:
-        <ul>
-            {% for class in classes %}
-            <li>{{ class.title}}: {{ class.value }}</li>
-            {% endfor %}
-        </ul>
-    </p>
-    {% endif %}
-    <h2>Arvostelut</h2>
+{% block content %}
+<h2>{{ recipe.title }}</h2>
+{% if session.user_id == recipe.user_id%}
+<p>
+    <a href = "/edit_recipe/{{ recipe.id}}">Muokkaa</a>
+    <a href = "/remove_recipe/{{ recipe.id}}">Poista</a>
+</p>
+{% endif %}
+<p>
+    {{ recipe.description }}
+</p>
+<p>
+    Valmistusaika: {{ recipe.preparation_time }} min
+</p>
+<p>
+    Ilmoittaja:  <a href="/user/{{ recipe.user_id }}">{{ recipe.username }}</a>
+</p>
+{% if classes %}
+<p>
+    Luokat:
     <ul>
-        {% for comment in comments %}
-        <li>{{ comment.comment }} , {{ comment.grade }} - <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a></li>
+        {% for class in classes %}
+        <li>{{ class.title}}: {{ class.value }}</li>
         {% endfor %}
     </ul>
-    {% if session.user_id %}
-        <h2>Uusi arvostelu</h2>
-        <form action="/create_comment" method="post">
-            <label for="grade">Arvosana (1-10):</label><br>
-            <input type="text" name="grade" id="grade" maxlength="2" size="4" pattern="^(10|[1-9])$" required/>
-        
-            <br><br>
-        
-            <label for="comment">Kommentti:</label><br>
-            <textarea name="comment" rows="5" cols="30" maxlength="400" required ></textarea>
-            <input type="hidden" name="recipe_id" value ="{{ recipe.id }}">
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-            <input type="submit" value="Lähetä kommentti"/>
-        </form>
-    {% endif %}
-    <p>
-        <a href="/">Takaisin</a>     
-    </p>
-</body>
+</p>
+{% endif %}
+<h3>Arvostelut</h3>
+<ul>
+    {% for comment in comments %}
+    <li>{{ comment.comment }} , {{ comment.grade }} - <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a></li>
+    {% endfor %}
+</ul>
+{% if session.user_id %}
+    <h3>Uusi arvostelu</h3>
+    <form action="/create_comment" method="post">
+        <label for="grade">Arvosana (1-10):</label><br>
+        <input type="text" name="grade" id="grade" maxlength="2" size="4" pattern="^(10|[1-9])$" required/>
 
-</html>
+        <br><br>
+
+        <label for="comment">Kommentti:</label><br>
+        <textarea name="comment" rows="5" cols="30" maxlength="400" required ></textarea>
+        <input type="hidden" name="recipe_id" value ="{{ recipe.id }}">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <input type="submit" value="Lähetä kommentti"/>
+    </form>
+{% endif %}
+{% endblock %}

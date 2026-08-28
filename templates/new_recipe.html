@@ -1,54 +1,46 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Uusi resepti</title>
-</head>
+{% block title %} Uusi resepti {% endblock %}
 
-<body>
-    <h1>Uusi resepti</h1>
-  <form action="/create_recipe" method="post">
-    <p>
-      Otsikko: <br />
-      <input type="text" name="title" maxlength="50" required />
-    </p>
-    <p>
-      Reseptin kuvaus: <br />
-      <textarea name="description" rows="10" cols="60" maxlength="1000" required ></textarea>
-    </p>
-    <p>
-      Valmistusaika: <br />
-      <input type="text" name="preparation_time" size="8" pattern = "[1-9][0-9]{0,3}" required /> min
-    </p>
+{% block content %}
+<h2>Uusi resepti</h2>
+<form action="/create_recipe" method="post">
+  <p>
+    <label for="title">Otsikko:</label> <br />
+    <input type="text" name="title" maxlength="50" required />
+  </p>
+  <p>
+    <label for="description">Kuvaus</label>: <br />
+    <textarea name="description" rows="10" cols="60" maxlength="1000" required ></textarea>
+  </p>
+  <p>
+    <label for="preparation_time">Valmistusaika</label>: <br />
+    <input type="text" name="preparation_time" size="8" pattern = "[1-9][0-9]{0,3}" required /> min
+  </p>
 
   {% for class in classes %}
-    <p>
-      {{ class }}: <br />
+  <p>
+    {{ class }}: <br />
+    {% for option in classes[class] %}
+      {% if class == "Ruoan tyyppi" %}
+        <input type="radio"
+              name="category"
+              value="{{ option }}"
+              id="{{ class }}{{ option }}">
+        <label for="{{ class }}{{ option }}">{{ option }}</label>
 
-      {% for option in classes[class] %}
-
-        {% if class == "Ruoan tyyppi" %}
-          <input type="radio"
-                name="category"
-                value="{{ option }}"
-                id="{{ class }}{{ option }}">
-          <label for="{{ class }}{{ option }}">{{ option }}</label>
-
-        {% elif class == "Ruokavalio" %}
-          <input type="checkbox"
-                name="diet"
-                value="{{ option }}"
-                id="{{ class }}{{ option }}">
-          <label for="{{ class }}{{ option }}">{{ option }}</label>
-        {% endif %}
-
-      {% endfor %}
-    </p>
+      {% elif class == "Ruokavalio" %}
+        <input type="checkbox"
+              name="diet"
+              value="{{ option }}"
+              id="{{ class }}{{ option }}">
+        <label for="{{ class }}{{ option }}">{{ option }}</label>
+      {% endif %}
+    {% endfor %}
+  </p>
   {% endfor %}
 
-<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-<input type="submit" value="Luo resepti">
-  </form>
-</body>
-
-</html>
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+  <input type="submit" value="Luo resepti">
+</form>
+{% endblock %}

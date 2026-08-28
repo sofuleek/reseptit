@@ -1,36 +1,12 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>reseptit</title>
-</head>
+{% block title %}Reseptit{% endblock %}
 
-<body>
-  <h1>Reseptit</h1>
-
-  {% if session.username %}
-  <p>
-    Olet kirjautunut nimellä {{ session.username }}
-  </p>
-  {% endif %}
-
-  <p>
-    <a href="find_recipe">Etsi resepti</a>
-  {% if session.user_id %}
-    <a href="new_recipe">Uusi resepti</a>
-    <a href="/logout">Kirjaudu ulos</a>
-  {% else %}
-    <a href="/login">Kirjaudu sisään</a>
-    <a href="/register">Luo tunnus</a>
-  {% endif %}
-  </p>
-
-  <h2>Reseptit</h2>
-  <ul>
-    {% for recipe in recipes %}
-    <li><a href="/recipe/{{ recipe.id }}">{{ recipe.title }}</a></li>
-    {% endfor %}
-  </ul>
-</body>
-
-</html>
+{% block content %}
+<h2>Reseptit</h2>
+<ul>
+  {% for recipe in recipes %}
+  <li><a href="/recipe/{{ recipe.id }}">{{ recipe.title }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}
