@@ -116,7 +116,8 @@ def create_recipe():
 
     recipes.add_recipe(title, description, preparation_time, user_id, classes)
 
-    return redirect("/")
+    recipe_id = db.last_insert_id()
+    return redirect("/recipe/" + str(recipe_id))
 
 @app.route("/edit_recipe/<int:recipe_id>")
 def edit_recipe(recipe_id):
