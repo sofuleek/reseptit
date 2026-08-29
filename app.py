@@ -114,9 +114,8 @@ def create_recipe():
             abort(403)
         classes.append(("Ruokavalio", diet))
 
-    recipes.add_recipe(title, description, preparation_time, user_id, classes)
+    recipe_id = recipes.add_recipe(title, description, preparation_time, user_id, classes)
 
-    recipe_id = db.last_insert_id()
     return redirect("/recipe/" + str(recipe_id))
 
 @app.route("/edit_recipe/<int:recipe_id>")

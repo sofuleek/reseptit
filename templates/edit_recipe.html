@@ -3,7 +3,8 @@
 {% block title %}Reseptin muokkaus {% endblock %}
 
 {% block content %}
-<h2>Reseptin muokkaus</h2>
+<h2>{{ recipe.title }}</h2>
+<h3>Reseptin muokkaus</h3>
 <form action="/update_recipe" method="post">
   <p>
     Otsikko: <br />
@@ -64,6 +65,7 @@
     </p>
   {% endfor %}
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-  <input type="submit" value="Päivitä resepti" />
+  <input type="submit" name="remove" value="Päivitä resepti">
+  <input type="submit" name="back" value="Palaa takaisin">
 </form>
 {% endblock %}

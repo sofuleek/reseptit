@@ -8,6 +8,7 @@
 {% for recipe in recipes %}
 <div class="recipe">
 <a href="/recipe/{{ recipe.id }}">{{ recipe.title }}</a> <br />
+Valmistusaika: {{ recipe.preparation_time }} min <br />
 Ilmoittaja: <a href="/user/{{ recipe.user_id }}">{{ recipe.username }}</a>
 </div>
 {% endfor %}

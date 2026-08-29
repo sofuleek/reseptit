@@ -24,6 +24,8 @@ def add_recipe(title, description, preparation_time, user_id, classes):
     for class_title, class_value in classes:
         db.execute(sql, [recipe_id, class_title, class_value])
 
+    return recipe_id
+
 def add_comment(recipe_id, user_id, comment, grade):
     sql = """INSERT INTO comments (recipe_id, user_id, comment, grade)
             VALUES (?, ?, ?, ?)"""
@@ -41,7 +43,7 @@ def get_classes(recipe_id):
     return db.query(sql, [recipe_id])
 
 def get_recipes():
-    sql = """SELECT recipes.id, recipes.title, users.id user_id, users.username
+    sql = """SELECT recipes.id, recipes.title, recipes.preparation_time, users.id user_id, users.username
              FROM recipes JOIN users ON recipes.user_id = users.id
              GROUP BY recipes.id
              ORDER BY recipes.id DESC"""
@@ -85,9 +87,12 @@ def remove_recipe(recipe_id):
     db.execute(sql, [recipe_id])
 
 def find_recipes(query):
-    sql = """SELECT id, title
+    sql = """SELECT DISTINCT recipes.id, recipes.title
              FROM recipes
-             WHERE title LIKE ? OR description LIKE ?
-             ORDER BY id DESC"""
+             LEFT JOIN recipe_classes ON recipes.id = recipe_classes.recipe_id
+             WHERE recipes.title LIKE ? OR recipes.description LIKE ? OR recipe_classes.value LIKE ?
+             ORDER BY recipes.id DESC"""
+
     like = "%" + query + "%"
-    return db.query(sql, [like, like])
+
+    return db.query(sql, [like, like, like])
