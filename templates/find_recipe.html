@@ -9,16 +9,19 @@
     <p>
     Hakusana: <input type="text" name="query" value= "{{ query }}" >
     </p>
-    <input type="submit" value="Lähetä">
+    <input type="submit" value="Etsi">
 </form>
 
 {% if query %}
+{% if results %}
 <h3>Tulokset</h3>
 
-<ul>
-    {% for recipe in results %}
-    <li><a href="/recipe/{{ recipe.id }}">{{ recipe.title }}</a></li>
-    {% endfor %}
-</ul>
+    <ul>
+        {% for recipe in results %}
+        <li><a href="/recipe/{{ recipe.id }}">{{ recipe.title }}</a></li>
+        {% endfor %}
+    </ul>
+{% else %} <p>Hakusanalla "{{ query }}" ei löytynyt reseptejä.</p>
+{% endif %}
 {% endif %}
 {% endblock %}
