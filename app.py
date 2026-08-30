@@ -293,7 +293,7 @@ def remove_recipe(recipe_id):
 
 @app.route("/register")
 def register():
-    return render_template("register.html")
+    return render_template("register.html", filled={})
 
 @app.route("/create", methods=["POST"])
 def create():

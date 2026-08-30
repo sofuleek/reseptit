@@ -48,7 +48,7 @@
         <br><br>
 
         <label for="comment">Kommentti:</label><br>
-        <textarea name="comment" rows="5" cols="30" maxlength="400" required>{{ filled.comment }}</textarea>
+        <textarea name="comment" id="comment" rows="5" cols="30" maxlength="400" required>{{ filled.comment }}</textarea>
         <input type="hidden" name="recipe_id" value ="{{ recipe.id }}">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
         <input type="submit" value="Lähetä kommentti"/>

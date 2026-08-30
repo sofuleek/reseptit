@@ -7,20 +7,20 @@
 <form action="/create_recipe" method="post">
   <p>
     <label for="title">Otsikko:</label> <br />
-    <input type="text" name="title" maxlength="50" value="{{ filled.title }}" required>
+    <input type="text" name="title" id="title" maxlength="50" value="{{ filled.title }}" required>
   </p>
   <p>
     <label for="description">Kuvaus</label>: <br />
-    <textarea name="description" rows="10" cols="60" maxlength="1000" required>{{ filled.description }}</textarea>
+    <textarea name="description" id="description" rows="10" cols="60" maxlength="1000" required>{{ filled.description }}</textarea>
   </p>
   <p>
     <label for="preparation_time">Valmistusaika</label>: <br />
-    <input type="text" name="preparation_time" size="8" pattern = "[1-9][0-9]{0,2}" value="{{ filled.preparation_time }}" required /> min
+    <input type="text" name="preparation_time" id="preparation_time" size="8" pattern = "[1-9][0-9]{0,2}" value="{{ filled.preparation_time }}" required /> min
   </p>
 
   {% for class in classes %}
   <p>
-    {{ class }}: <br />
+    <label for="class{{ class }}">{{ class }}</label>: <br />
     {% for option in classes[class] %}
       {% if class == "Ruoan tyyppi" %}
         <input type="radio"
