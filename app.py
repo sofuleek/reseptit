@@ -48,16 +48,19 @@ def find_recipe():
 def show_recipe(recipe_id):
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
-        abort(404)
+        flash("VIRHE: resepti puuttuu")
+        return redirect("/")
     classes = recipes.get_classes(recipe_id)
     comments = recipes.get_comments(recipe_id)
-    return render_template("show_recipe.html", recipe=recipe, classes=classes, comments=comments)
+    return render_template("show_recipe.html", recipe=recipe, classes=classes, comments=comments, filled={})
 
 @app.route("/new_recipe")
 def new_recipe():
     require_login()
     classes = recipes.get_all_classes()
-    return render_template("new_recipe.html", classes=classes)
+    filled = {}
+
+    return render_template("new_recipe.html", classes=classes, filled=filled)
 
 @app.route("/create_comment", methods=["POST"])
 def create_comment():
@@ -66,16 +69,29 @@ def create_comment():
 
     recipe_id = request.form.get("recipe_id")
     grade = request.form["grade"]
-    if not re.search("^(10|[1-9])$", grade):
-        abort(403)
     comment = request.form["comment"].strip()
-    if not comment:
-        abort(403)
-    if len(comment) > 400:
-        abort(403)
+
+    filled = {
+        "grade": grade,
+        "comment": comment
+    }
+
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
-        abort(403)
+        flash("VIRHE: resepti puuttuu")
+        return redirect("/")
+
+    if not re.search("^(10|[1-9])$", grade):
+        flash("VIRHE: arvosanan pitää olla 1-10")
+        return render_template( "show_recipe.html", recipe=recipe, classes=recipes.get_classes(recipe_id), comments=recipes.get_comments(recipe_id), filled=filled )
+
+    if not comment:
+        flash("VIRHE: kommentti ei voi olla tyhjä")
+        return render_template( "show_recipe.html", recipe=recipe, classes=recipes.get_classes(recipe_id), comments=recipes.get_comments(recipe_id), filled=filled )
+
+    if len(comment) > 400:
+        flash("VIRHE: kommentti ei voi olla yli 400 merkkiä pitkä")
+        return render_template( "show_recipe.html", recipe=recipe, classes=recipes.get_classes(recipe_id), comments=recipes.get_comments(recipe_id), filled=filled )
 
     user_id = session["user_id"]
 
@@ -89,29 +105,47 @@ def create_recipe():
     check_csrf()
 
     title = request.form["title"]
-    if not title or len(title) > 50:
-        abort(403)
     description = request.form["description"]
-    if not description or len(description) > 1000:
-        abort(403)
     preparation_time = request.form["preparation_time"]
-    if not re.search("^[1-9][0-9]{0,3}$", preparation_time):
-        abort(403)
-    user_id = session["user_id"]
+
+    filled = {
+        "title": title,
+        "description": description,
+        "preparation_time": preparation_time
+    }
 
     all_classes = recipes.get_all_classes()
+
+    if not title:
+        flash("VIRHE: otsikko ei voi olla tyhjä")
+        return render_template("new_recipe.html", filled=filled, classes=all_classes)
+    if len(title) > 50:
+        flash("VIRHE: otsikko ei voi olla yli 50 merkkiä pitkä")
+        return render_template("new_recipe.html", filled=filled, classes=all_classes)
+    if not description:
+        flash("VIRHE: kuvaus ei voi olla tyhjä")
+        return render_template("new_recipe.html", filled=filled, classes=all_classes)
+    if len(description) > 1000:
+        flash("VIRHE: kuvaus ei voi olla yli 1000 merkkiä pitkä")
+        return render_template("new_recipe.html", filled=filled, classes=all_classes)
+    if not re.search("^[1-9][0-9]{0,2}$", preparation_time):
+        flash("VIRHE: valmistusajan pitää olla 1-999 minuuttia")
+        return render_template("new_recipe.html", filled=filled, classes=all_classes)
+    user_id = session["user_id"]
 
     classes = []
     category = request.form.get("category")
     if category:
         if category not in all_classes["Ruoan tyyppi"]:
-            abort(403)
+            flash("VIRHE: valittu ruoan tyyppi ei ole kelvollinen")
+            return render_template("new_recipe.html", filled=filled, classes=all_classes)
         classes.append(("Ruoan tyyppi", category))
 
     diets = request.form.getlist("diet")
     for diet in diets:
         if diet not in all_classes["Ruokavalio"]:
-            abort(403)
+            flash("VIRHE: valittu ruokavalio ei ole kelvollinen")
+            return render_template("new_recipe.html", filled=filled, classes=all_classes)
         classes.append(("Ruokavalio", diet))
 
     recipe_id = recipes.add_recipe(title, description, preparation_time, user_id, classes)
@@ -123,7 +157,8 @@ def edit_recipe(recipe_id):
     require_login()
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
-        abort(404)
+        flash("VIRHE: resepti puuttuu")
+        return redirect("/")
     if recipe["user_id"] != session["user_id"]:
         abort(403)
 
@@ -136,7 +171,13 @@ def edit_recipe(recipe_id):
     for entry in recipes.get_classes(recipe_id):
         classes[entry["title"]].append(entry["value"])
 
-    return render_template("edit_recipe.html", recipe=recipe, classes=classes, all_classes=all_classes)
+    filled = {
+        "title": recipe["title"],
+        "description": recipe["description"],
+        "preparation_time": recipe["preparation_time"]
+    }
+
+    return render_template("edit_recipe.html", recipe=recipe, classes=classes, all_classes=all_classes, filled=filled)
 
 
 @app.route("/update_recipe", methods=["POST"])
@@ -146,33 +187,69 @@ def update_recipe():
     recipe_id = request.form["recipe_id"]
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
-        abort(404)
+        flash("VIRHE: resepti puuttuu")
+        return redirect("/")
     if recipe["user_id"] != session["user_id"]:
         abort(403)
 
     title = request.form["title"]
-    if not title or len(title) > 50:
-        abort(403)
     description = request.form["description"]
-    if not description or len(description) > 1000:
-        abort(403)
     preparation_time = request.form["preparation_time"]
-    if not re.search("^[1-9][0-9]{0,3}$", preparation_time):
-        abort(403)
+
+    filled = { "title": title,
+                "description": description,
+                "preparation_time": preparation_time
+    }
 
     all_classes = recipes.get_all_classes()
+
+    selected_classes = {
+        "Ruoan tyyppi": [],
+        "Ruokavalio": []
+    }
+
+    category = request.form.get("category")
+    if category:
+        selected_classes["Ruoan tyyppi"].append(category) 
+
+    diets = request.form.getlist("diet") 
+    for diet in diets:
+        selected_classes["Ruokavalio"].append(diet)
+
+    if not title:
+        flash("VIRHE: otsikko ei voi olla tyhjä")
+        return render_template("edit_recipe.html", recipe=recipe, filled=filled, classes=selected_classes, all_classes=all_classes)
+
+    if len(title) > 50:
+        flash("VIRHE: otsikko ei voi olla yli 50 merkkiä pitkä")
+        return render_template("edit_recipe.html", recipe=recipe, filled=filled, classes=selected_classes, all_classes=all_classes)
+
+    if not description:
+        flash("VIRHE: kuvaus ei voi olla tyhjä")
+        return render_template("edit_recipe.html", recipe=recipe, filled=filled, classes=selected_classes, all_classes=all_classes)
+
+    if len(description) > 1000:
+        flash("VIRHE: kuvaus ei voi olla yli 1000 merkkiä pitkä")
+        return render_template("edit_recipe.html", recipe=recipe, filled=filled, classes=selected_classes, all_classes=all_classes)
+
+    if not re.search("^[1-9][0-9]{0,2}$", preparation_time):
+        flash("VIRHE: valmistusajan pitää olla 1-999 minuuttia")
+        return render_template("edit_recipe.html", recipe=recipe, filled=filled, classes=selected_classes, all_classes=all_classes)
+
 
     classes = []
     category = request.form.get("category")
     if category:
         if category not in all_classes["Ruoan tyyppi"]:
-            abort(403)
+            flash("VIRHE: valittu ruoan tyyppi ei ole kelvollinen")
+            return render_template("edit_recipe.html", recipe=recipe, filled=filled, classes=selected_classes, all_classes=all_classes)
         classes.append(("Ruoan tyyppi", category))
 
     diets = request.form.getlist("diet")
     for diet in diets:
         if diet not in all_classes["Ruokavalio"]:
-            abort(403)
+            flash("VIRHE: valittu ruokavalio ei ole kelvollinen")
+            return render_template("edit_recipe.html", recipe=recipe, filled=filled, classes=selected_classes, all_classes=all_classes)
         classes.append(("Ruokavalio", diet))
 
     recipes.update_recipe(recipe_id, title, description, preparation_time, classes)
@@ -184,7 +261,8 @@ def remove_recipe(recipe_id):
     require_login()
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
-        abort(404)
+        flash("VIRHE: resepti puuttuu")
+        return redirect("/")
     if recipe["user_id"] != session["user_id"]:
         abort(403)
     
@@ -209,26 +287,46 @@ def create():
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
+
+    filled = { "username": username }
+
+    if not username:
+        flash("VIRHE: käyttäjänimi ei voi olla tyhjä")
+        return render_template("register.html", filled=filled)
+
+    if len(username) > 50:
+        flash("VIRHE: käyttäjänimi ei voi olla yli 50 merkkiä pitkä")
+        return render_template("register.html", filled=filled)
+
+    if not password1:
+        flash("VIRHE: salasana ei voi olla tyhjä")
+        return render_template("register.html", filled=filled)
+
+    if not password2:
+        flash("VIRHE: kirjoita salasana uudestaan")
+        return render_template("register.html", filled=filled)
+
     if password1 != password2:
         flash("VIRHE: salasanat eivät ole samat")
-        return redirect("/register")
+        return render_template("register.html", filled=filled)
 
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
         flash("VIRHE: tunnus on jo varattu")
-        return redirect("/register")
+        return render_template("register.html", filled=filled)
 
     return redirect("/login")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        return render_template("login.html", next_page=request.referrer)
 
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        next_page = request.form["next_page"]
 
         user_id = users.check_login(username, password)
         if user_id:
@@ -238,7 +336,7 @@ def login():
             return redirect("/")
         else:
             flash("VIRHE: väärä tunnus tai salasana")
-            return redirect("/login")
+            return render_template("login.html", next_page=next_page)
 
 @app.route("/logout")
 def logout():

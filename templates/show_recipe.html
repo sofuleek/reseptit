@@ -39,12 +39,12 @@
     <h3>Uusi arvostelu</h3>
     <form action="/create_comment" method="post">
         <label for="grade">Arvosana (1-10):</label><br>
-        <input type="text" name="grade" id="grade" maxlength="2" size="4" pattern="^(10|[1-9])$" required/>
+        <input type="text" name="grade" id="grade" maxlength="2" size="4" pattern="^(10|[1-9])$" value="{{ filled.grade }}" required/>
 
         <br><br>
 
         <label for="comment">Kommentti:</label><br>
-        <textarea name="comment" rows="5" cols="30" maxlength="400" required ></textarea>
+        <textarea name="comment" rows="5" cols="30" maxlength="400" required>{{ filled.comment }}</textarea>
         <input type="hidden" name="recipe_id" value ="{{ recipe.id }}">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
         <input type="submit" value="Lähetä kommentti"/>
