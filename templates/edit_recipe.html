@@ -8,15 +8,15 @@
 <form action="/update_recipe" method="post">
   <p>
     <label for="title">Otsikko</label>: <br />
-    <input type="text" name="title" id="title" value="{{ filled.title }}" maxlength="50" required />
+    <input type="text" name="title" id="title" value="{{ filled.title }}" maxlength="50" />
   </p>
   <p>
     <label for="description">Kuvaus</label>: <br />
-    <textarea name="description" id="description" rows="10" cols="60" maxlength="1000" required >{{ filled.description }}</textarea>
+    <textarea name="description" id="description" rows="10" cols="60" maxlength="1000"  >{{ filled.description }}</textarea>
   </p>
   <p>
     <label for="preparation_time">Valmistusaika</label>: <br />
-    <input type="text" name="preparation_time" id="preparation_time" size="8" pattern = "[1-9][0-9]{0,2}" required value="{{ filled.preparation_time }}" /> min
+    <input type="text" name="preparation_time" id="preparation_time" size="8" pattern = "[1-9][0-9]{0,2}" value="{{ filled.preparation_time }}" /> min
   </p>
   <input type="hidden" name="recipe_id" value="{{ recipe.id }}" />
   {% for class in all_classes %}

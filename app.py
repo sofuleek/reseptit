@@ -247,7 +247,7 @@ def update_recipe():
         return render_template("edit_recipe.html", recipe=recipe, filled=filled, classes=selected_classes, all_classes=all_classes)
 
     if not re.search("^[1-9][0-9]{0,2}$", preparation_time):
-        flash("VIRHE: valmistusajan pitää olla 1-999 minuuttia")
+        flash("VIRHE: valmistusaika ei voi olla tyhjä ja sen pitää olla 1-999 minuuttia")
         return render_template("edit_recipe.html", recipe=recipe, filled=filled, classes=selected_classes, all_classes=all_classes)
 
 
