@@ -2,6 +2,7 @@ import sqlite3
 import secrets
 from flask import Flask
 from flask import abort, flash, redirect, render_template, request, session
+import markupsafe
 import config
 import db
 import recipes
@@ -29,6 +30,12 @@ def forbidden(e):
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
 
 
 @app.route("/")

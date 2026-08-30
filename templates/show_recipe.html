@@ -11,7 +11,7 @@
 </p>
 {% endif %}
 <p>
-    {{ recipe.description }}
+    {{ recipe.description | show_lines }}
 </p>
 <p>
     Valmistusaika: {{ recipe.preparation_time }} min
