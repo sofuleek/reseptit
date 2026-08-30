@@ -21,6 +21,16 @@ def check_csrf():
     if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
+@app.errorhandler(403)
+def forbidden(e):
+    return render_template("403.html"), 403
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+
 @app.route("/")
 def index():
     all_recipes = recipes.get_recipes()
@@ -48,8 +58,7 @@ def find_recipe():
 def show_recipe(recipe_id):
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
-        flash("VIRHE: resepti puuttuu")
-        return redirect("/")
+        abort(404)
     classes = recipes.get_classes(recipe_id)
     comments = recipes.get_comments(recipe_id)
     return render_template("show_recipe.html", recipe=recipe, classes=classes, comments=comments, filled={})
@@ -78,8 +87,7 @@ def create_comment():
 
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
-        flash("VIRHE: resepti puuttuu")
-        return redirect("/")
+        abort(404)
 
     if not re.search("^(10|[1-9])$", grade):
         flash("VIRHE: arvosanan pitää olla 1-10")
@@ -157,8 +165,7 @@ def edit_recipe(recipe_id):
     require_login()
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
-        flash("VIRHE: resepti puuttuu")
-        return redirect("/")
+        abort(404)
     if recipe["user_id"] != session["user_id"]:
         abort(403)
 
@@ -187,8 +194,7 @@ def update_recipe():
     recipe_id = request.form["recipe_id"]
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
-        flash("VIRHE: resepti puuttuu")
-        return redirect("/")
+        abort(404)
     if recipe["user_id"] != session["user_id"]:
         abort(403)
 
@@ -261,8 +267,7 @@ def remove_recipe(recipe_id):
     require_login()
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
-        flash("VIRHE: resepti puuttuu")
-        return redirect("/")
+        abort(404)
     if recipe["user_id"] != session["user_id"]:
         abort(403)
     
