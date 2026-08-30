@@ -30,6 +30,10 @@
 </p>
 {% endif %}
 <h3>Arvostelut</h3>
+
+{% if average_grade %}
+<p>Arvostelujen keskiarvo: {{ "%.1f"|format(average_grade) }} / 10</p> {% endif %}
+
 <ul>
     {% for comment in comments %}
     <li>{{ comment.comment }} , {{ comment.grade }} - <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a></li>

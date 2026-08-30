@@ -61,7 +61,8 @@ def show_recipe(recipe_id):
         abort(404)
     classes = recipes.get_classes(recipe_id)
     comments = recipes.get_comments(recipe_id)
-    return render_template("show_recipe.html", recipe=recipe, classes=classes, comments=comments, filled={})
+    average_grade = recipes.get_average_grade(recipe_id)
+    return render_template("show_recipe.html", recipe=recipe, classes=classes, comments=comments, filled={}, average_grade=average_grade)
 
 @app.route("/new_recipe")
 def new_recipe():

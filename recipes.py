@@ -43,8 +43,9 @@ def get_classes(recipe_id):
     return db.query(sql, [recipe_id])
 
 def get_recipes():
-    sql = """SELECT recipes.id, recipes.title, recipes.preparation_time, users.id user_id, users.username
+    sql = """SELECT recipes.id, recipes.title, recipes.preparation_time, users.id user_id, users.username, AVG(comments.grade) average_grade
              FROM recipes JOIN users ON recipes.user_id = users.id
+                          LEFT JOIN comments ON recipes.id = comments.recipe_id
              GROUP BY recipes.id
              ORDER BY recipes.id DESC"""
     return db.query(sql)
@@ -96,3 +97,11 @@ def find_recipes(query):
     like = "%" + query + "%"
 
     return db.query(sql, [like, like, like])
+
+def get_average_grade(recipe_id):
+    sql = """SELECT AVG(grade)
+             FROM comments
+             WHERE recipe_id = ?"""
+    result = db.query(sql, [recipe_id])
+
+    return result[0][0]
