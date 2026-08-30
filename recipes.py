@@ -32,10 +32,12 @@ def add_comment(recipe_id, user_id, comment, grade):
     db.execute(sql, [recipe_id, user_id, comment, grade])
 
 def get_comments(recipe_id):
-    sql = """SELECT comments.comment, comments.grade, users.id user_id, users.username
-             FROM comments, users
-             WHERE comments.recipe_id = ? AND comments.user_id = users.id
-             ORDER BY comments.id DESC"""
+    sql = """SELECT comments.comment, comments.grade,
+                users.id user_id, users.username
+         FROM comments
+         JOIN users ON comments.user_id = users.id
+         WHERE comments.recipe_id = ?
+         ORDER BY comments.id DESC"""
     return db.query(sql, [recipe_id])
 
 def get_classes(recipe_id):
@@ -52,14 +54,14 @@ def get_recipes():
 
 def get_recipe(recipe_id):
     sql = """SELECT recipes.id,
-                    recipes.title,
-                    recipes.description,
-                    recipes.preparation_time,
-                    users.id user_id,
-                    users.username
-             FROM recipes, users
-             WHERE recipes.user_id = users.id AND
-                   recipes.id = ?"""
+                recipes.title,
+                recipes.description,
+                recipes.preparation_time,
+                users.id user_id,
+                users.username
+         FROM recipes
+         JOIN users ON recipes.user_id = users.id
+         WHERE recipes.id = ?"""
     result = db.query(sql, [recipe_id])
     return result[0] if result else None
 

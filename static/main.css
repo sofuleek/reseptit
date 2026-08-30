@@ -19,3 +19,8 @@ body {
   background-color: #B8C9D6;
   color: #263744;
 }
+
+.container {
+  background-color: white;
+  padding: 1em;
+}

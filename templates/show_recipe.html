@@ -20,14 +20,12 @@
     Ilmoittaja:  <a href="/user/{{ recipe.user_id }}">{{ recipe.username }}</a>
 </p>
 {% if classes %}
-<p>
-    Luokat:
-    <ul>
-        {% for class in classes %}
-        <li>{{ class.title}}: {{ class.value }}</li>
-        {% endfor %}
-    </ul>
-</p>
+<p> Luokat: </p>
+<ul>
+    {% for class in classes %}
+    <li>{{ class.title}}: {{ class.value }}</li>
+    {% endfor %}
+</ul>
 {% endif %}
 <h3>Arvostelut</h3>
 
